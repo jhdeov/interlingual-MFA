@@ -19,7 +19,6 @@ old_stdout = sys.stdout
 log_file = open("convertAlignments.message.log", "w")
 sys.stdout = log_file
 
-# python convertAlignments.py words_that_change.json "/Users/Hovsep/Desktop/intonation_data_output_converted"
 
 if path[-1] !=  '/':
     path = path + '/'

@@ -8,8 +8,6 @@ pronDict_original_filepath = sys.argv[1]
 phone_mapping_filepath = sys.argv[2]
 pronDict_intermediate_filepath = sys.argv[3]
 
-#  python convertPronDict.py  /Users/Hovsep/Desktop/word-pronunciations-WA.txt /Users/Hovsep/Desktop/phoneMapping.txt /Users/Hovsep/Desktop/pronDictIntermediate.txt
-
 
 # Read the phone_mapping file and create a dict object out of it
 phone_mapping = {}
@@ -73,9 +71,9 @@ print("Will read the original pronunciation dictionary and create an intermediat
 
 print("Useful debugging info for conversion is printed into the convertPronDict.message.log")
 # The printing code was taken from https://stackoverflow.com/a/2513511
-# old_stdout = sys.stdout
-# log_file = open("convertPronDict.message.log", "w")
-# sys.stdout = log_file
+old_stdout = sys.stdout
+log_file = open("convertPronDict.message.log", "w")
+sys.stdout = log_file
 
 
 with codecs.open(pronDict_original_filepath, 'r', 'utf-8') as pronDict_original_file:
@@ -110,8 +108,8 @@ print(f"The word transcriptions are as follows:")
 for wordTranscription in wordTranscriptions.items():
     print(str(wordTranscription[1]))
 
-# sys.stdout = old_stdout
-# log_file.close()
+sys.stdout = old_stdout
+log_file.close()
 
 print("The pickle object `wordTranscriptions.pkl` is created. It is a Python dictionary that keeps track of the changes.")
 with open('wordTranscriptions.pkl', 'wb') as f:
