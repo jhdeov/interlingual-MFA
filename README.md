@@ -49,6 +49,9 @@ This command will replace the non-English phones with English phones. The script
 
 # Open issues and future work
 
-There are measures to minimize variation in the data. You can have words that have multiple possible pronunciations. However, the conversion codes currently cannot support converting an alignment where a segment was deleted. To allow this level of flexibility, the conversion would likely need to incorporate a type of `shortest edit distance` algorithm. If you come across an issue with deletion or anything else, feel free to contact me. 
+There are measures to minimize variation in the data. But I haven't yet incorporated fixes for some likely common errors.
 
-It would be interesting to also use this workflow to examine how different high-resource language models handle the same data from different languages. Feel free to contact me if you have any ideas for collaboration.
+* You can have words that have multiple possible pronunciations. However, the conversion codes currently cannot support converting an alignment where a segment was deleted. To allow this level of flexibility, the conversion would likely need to incorporate a type of `shortest edit distance` algorithm.
+* I haven't tested out the conversion scripts with funny edge cases like case-sensitivity. 
+
+It would be interesting to also use this workflow to examine how different high-resource language models handle the same data from different languages. Feel free to contact me if you have any ideas for collaboration or fixes.
