@@ -3,6 +3,7 @@ import tgt
 import glob
 import sys
 
+
 words_that_change_filepath = sys.argv[1]
 path = sys.argv[2]
 # Read data from file:
@@ -42,6 +43,7 @@ def replaceTranscription(transcriptionChange,generated_intermediate_transcriptio
         print(
             f"\tError! The TextGrid has an intermediate transcription '{generated_intermediate_transcription}' but that does not "
             f"\tmatch the intermediate transcription that our intermediate dictionary used '{predicted_intermediate_transcription}'")
+        raise ValueError('There is an error, check the log file.')
         exit()
 
     print(f"\t\t\tThe word '{word}' has the intermediate transcription [{generated_intermediate_transcription_string}].\n"
@@ -64,6 +66,7 @@ def replaceTranscription(transcriptionChange,generated_intermediate_transcriptio
                 print(f"\t\t\t\t\t{phone_intervals}")
             else:
                 print(f"\t\t\t\tError! The segment at index {segment_index} was not [{segment_intermediate}]")
+                raise ValueError('There is an error, check the log file.')
                 exit()
 
 
@@ -73,13 +76,16 @@ for textGridFilePath in glob.iglob(path + '**/*.TextGrid', recursive=True):
 # Verify that the TextGrid has only two tiers: words and phones
     if len(tg.tiers) !=  2:
         print(f"\tError! The TextGrid must have 2 tiers, but you have {len(tg.tiers)} tier(s).")
+        raise ValueError('There is an error, check the log file.')
         exit()
     if tg.tiers[0].name != "words":
         print(f"\tError! The TextGrid's first tier must have the name 'words' but you have {tg.tiers[0].name}.")
+        raise ValueError('There is an error, check the log file.')
         exit()
     wordTier = tg.get_tier_by_name("words")
     if tg.tiers[0].name != "words":
         print(f"\tError! The TextGrid's second tier must have the name 'phones' but you have {tg.tiers[1].name}.")
+        raise ValueError('There is an error, check the log file.')
         exit()
     phoneTier = tg.get_tier_by_name("phones")
 

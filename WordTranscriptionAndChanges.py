@@ -56,4 +56,5 @@ class WordTranscription:
                           f" use instead ['a/æ' 'b'].\n"
                           f"Then in the phone mapping file, add the line `a/æ a`.\n"
                           f"You then have to manually go to the final alignment files, and manually change `a/æ` to either `a` or `æ`. ")
+                raise ValueError('There is an error, check the log file.')
                 exit()

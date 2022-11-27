@@ -8,7 +8,7 @@ pronDict_original_filepath = sys.argv[1]
 phone_mapping_filepath = sys.argv[2]
 pronDict_intermediate_filepath = sys.argv[3]
 
-
+	
 # Read the phone_mapping file and create a dict object out of it
 phone_mapping = {}
 # The phone_mapping dictionary has a simple structure of: phone_mapping[original_segment]=intermediate_segment
@@ -21,11 +21,13 @@ with codecs.open(phone_mapping_filepath, 'r', 'utf-8') as phone_mapping_file:
 
         if len(phone_line) != 2:
             print(f"Error, the line `{phone_line}` in the phone mapping file is NOT tab-separated with two columns.")
+            raise ValueError('There is an error, check the log file.')
             exit()
 
         original_phone, intermediate_phone = phone_line
         if original_phone in phone_mapping:
             print(f"Error, the phone {original_phone} appears multiple times in the phone mapping file.")
+            raise ValueError('There is an error, check the log file.')
             exit()
         phone_mapping[original_phone] = intermediate_phone
 
@@ -85,9 +87,10 @@ with codecs.open(pronDict_original_filepath, 'r', 'utf-8') as pronDict_original_
             dictionary_line = dictionary_line.split('\t')
             if len(phone_line) != 2:
                 print(f"\tError, the line `{dictionary_line}` in the original pronunciation dictionary file is NOT tab-separated with two columns.")
+                raise ValueError('There is an error, check the log file.')
                 exit()
 
-            word,original_transcription_string = dictionary_line
+            word,original_transcription_string = dictionary_line[0].strip(),  dictionary_line[1].strip()
             original_transcription = original_transcription_string.split(' ')
             transcriptionChange=convert_transcription_to_intermediate(original_transcription)
             intermediate_transcription_string = ' '.join(transcriptionChange.intermediate_transcription)
