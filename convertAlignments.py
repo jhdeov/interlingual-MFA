@@ -94,6 +94,11 @@ for textGridFilePath in glob.iglob(path + '**/*.TextGrid', recursive=True):
     for wordInterval in wordTier.annotations:
         print(f"\t\tProcessing the word: {wordInterval}")
         word = wordInterval.text
+        if word not in wordTranscriptions:
+        	print(f"\t\tErorr, the word {word} is missing from your pronunciation dictionary")
+        	raise ValueError('There is an error, check the log file.')
+        	exit()
+
         wordTranscription = wordTranscriptions[word]
         transcriptionChanges=wordTranscription.transcriptions
         phone_intervals = phoneTier.get_annotations_between_timepoints(wordInterval.start_time,
