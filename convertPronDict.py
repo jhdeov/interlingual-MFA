@@ -20,13 +20,15 @@ with codecs.open(phone_mapping_filepath, 'r', 'utf-8') as phone_mapping_file:
         phone_line = phone_line.split('\t')
 
         if len(phone_line) != 2:
-            print(f"Error, the line `{phone_line}` in the phone mapping file is NOT tab-separated with two columns.")
+            print(f"Error, the line `{phone_line}` in the phone mapping file is NOT tab-separated with two columns."
+                  f"\nMake sure all your lines are tab-separated with two columns.")
             raise ValueError('There is an error, check the log file.')
             exit()
 
         original_phone, intermediate_phone = phone_line
         if original_phone in phone_mapping:
-            print(f"Error, the phone {original_phone} appears multiple times in the phone mapping file.")
+            print(f"Error, the phone {original_phone} appears multiple times in the phone mapping file."
+                  f"\nMake sure all the phones from the original language are unique.")
             raise ValueError('There is an error, check the log file.')
             exit()
         phone_mapping[original_phone] = intermediate_phone
@@ -86,7 +88,8 @@ with codecs.open(pronDict_original_filepath, 'r', 'utf-8') as pronDict_original_
             print(f"\tProcessing the following line from the original pronunciation dictionary: {dictionary_line}")
             dictionary_line = dictionary_line.split('\t')
             if len(phone_line) != 2:
-                print(f"\tError, the line `{dictionary_line}` in the original pronunciation dictionary file is NOT tab-separated with two columns.")
+                print(f"\tError, the line `{dictionary_line}` in the original pronunciation dictionary file is NOT tab-separated with two columns."
+                      f"\nMake sure all your lines are tab-separated with two columns.")
                 raise ValueError('There is an error, check the log file.')
                 exit()
 
