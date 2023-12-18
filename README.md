@@ -2,7 +2,7 @@
 
 This repository contains Python scripts and workflow for a) taking an [MFA](montreal-forced-aligner.readthedocs.io/) forced alignment model that was trained for one language, and b) running that model onto a different language. 
 
-I tested the code with some [Armenian data](https://github.com/jhdeov/armenian-intonation/tree/main) and it seems to work.
+I tested the code with some [Armenian data](https://github.com/jhdeov/armenian-intonation/tree/main) by aligning with an English model (and some other high-resource models). The alignment seems to work well.
 
 # Background
 The rationale is that for low-resource languages, it takes a lot of data (sound files, transcriptions, pronunciation dictionaries) to create a high-quality alignment model. As a stepping stone, you can run a model from a high-resource language (like English) onto your low-resource language (like Armenian). The generated alignments seem to be quite sensible. In my anecdotal experience, the alignments I get from an English-based model (that's trained on over >1000hrs) are better than the alignments from a custom-made model (based on 1-20hrs of data). 
