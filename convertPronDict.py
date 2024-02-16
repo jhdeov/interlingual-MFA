@@ -76,7 +76,7 @@ print("Will read the original pronunciation dictionary and create an intermediat
 print("Useful debugging info for conversion is printed into the convertPronDict.message.log")
 # The printing code was taken from https://stackoverflow.com/a/2513511
 old_stdout = sys.stdout
-log_file = open("convertPronDict.message.log", "w")
+log_file = codecs.open("convertPronDict.message.log", "w", 'utf-8')
 sys.stdout = log_file
 
 
