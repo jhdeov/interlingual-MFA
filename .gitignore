@@ -3,3 +3,6 @@ wordTranscriptions.pkl
 convertPronDict.message.log
 convertAlignments.message.log
 *.pyc
+.DS_Store
+.DS_Store
+.DS_Store
