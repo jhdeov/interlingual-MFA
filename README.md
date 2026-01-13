@@ -4,12 +4,14 @@ This repository contains Python scripts and workflow for a) taking an [MFA](mont
 
 I tested the code with some [Armenian data](https://github.com/jhdeov/armenian-intonation/tree/main) by aligning with an English model (and some other high-resource models). The alignment seems to work well.
 
+The code has also been tested on Kalmyk speech from the [INEL Corpus](https://inel.corpora.uni-hamburg.de/portal/corpora/kalmyk/#en) with both English and French models. The English models produced the best alignments.
+
 # Background
 The rationale is that for low-resource languages, it takes a lot of data (sound files, transcriptions, pronunciation dictionaries) to create a high-quality alignment model. As a stepping stone, you can run a model from a high-resource language (like English) onto your low-resource language (like Armenian). The generated alignments seem to be quite sensible. In my anecdotal experience, the alignments I get from an English-based model (that's trained on over >1000hrs) are better than the alignments from a custom-made model (based on 1-20hrs of data). 
 
 # Workflow
 
-The following workflow explains the steps to running the scripts alongside MFA. There are example files in [Examples](/Examples/). A lot of the background work was done thanks to [TextGridTools](https://github.com/hbuschme/TextGridTools/tree/52819ef5df75a06298218b5b2c076c6774fd6a05). 
+The following workflow explains the steps to running the scripts alongside MFA. There are example files in [Examples](/Examples/). A lot of the background work was done thanks to [textgrid](https://github.com/kylebgorman/textgrid). 
 
 
 ## Before you begin

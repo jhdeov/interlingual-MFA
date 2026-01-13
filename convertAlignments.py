@@ -1,8 +1,9 @@
 import pickle
-import tgt
+import textgrid
 import glob
 import sys
-
+# modified by Ben Parkhurst to use textgrid (https://github.com/kylebgorman/textgrid/tree/master/textgrid), 
+# which resolved a unicode error that tgt was struggling with
 
 words_that_change_filepath = sys.argv[1]
 path = sys.argv[2]
@@ -61,7 +62,7 @@ def replaceTranscription(transcriptionChange,generated_intermediate_transcriptio
             if generated_intermediate_transcription[segment_index] == segment_intermediate:
                 print('\t\t\t\tOriginal:')
                 print(f"\t\t\t\t\t{phone_intervals}")
-                phone_intervals[segment_index].text = segment_original
+                phone_intervals[segment_index].mark = segment_original
                 print('\t\t\t\tModified:')
                 print(f"\t\t\t\t\t{phone_intervals}")
             else:
@@ -71,60 +72,61 @@ def replaceTranscription(transcriptionChange,generated_intermediate_transcriptio
 
 
 for textGridFilePath in glob.iglob(path + '**/*.TextGrid', recursive=True):
-    tg = tgt.read_textgrid(textGridFilePath)
+    tg = textgrid.TextGrid.fromFile(textGridFilePath)
     print(f"\tProcessing the TextGrid {textGridFilePath}.")
 # Verify that the TextGrid has only two tiers: words and phones
-    if len(tg.tiers) !=  2:
-        print(f"\tError! The TextGrid must have 2 tiers, but you have {len(tg.tiers)} tier(s).")
+    if len(tg) !=  2:
+        print(f"\tError! The TextGrid must have 2 tiers, but you have {len(tg)} tier(s).")
         raise ValueError('There is an error, check the log file.')
         exit()
+    if tg[0].name != "words":
+        print(f"\tError! The TextGrid's first tier must have the name 'words' but you have {tg[0].name}.")
+        raise ValueError('There is an error, check the log file.')
+        exit()
+    wordTier = tg[0]
     if tg.tiers[0].name != "words":
-        print(f"\tError! The TextGrid's first tier must have the name 'words' but you have {tg.tiers[0].name}.")
+        print(f"\tError! The TextGrid's second tier must have the name 'phones' but you have {tg[1].name}.")
         raise ValueError('There is an error, check the log file.')
         exit()
-    wordTier = tg.get_tier_by_name("words")
-    if tg.tiers[0].name != "words":
-        print(f"\tError! The TextGrid's second tier must have the name 'phones' but you have {tg.tiers[1].name}.")
-        raise ValueError('There is an error, check the log file.')
-        exit()
-    phoneTier = tg.get_tier_by_name("phones")
+    phoneTier = tg[0]
 
 
     # Will go through each word and convert its phone transcription back to the original IPA symbols
-    for wordInterval in wordTier.annotations:
-        print(f"\t\tProcessing the word: {wordInterval}")
-        word = wordInterval.text
-        if word not in wordTranscriptions:
-        	print(f"\t\tErorr, the word {word} is missing from your pronunciation dictionary")
-        	raise ValueError('There is an error, check the log file.')
-        	exit()
+    disallowed = ["","[bracketed]","<unk>"] # Ignores silent tiers, as well as any bracketed things (sometimes used for verbal filler) and unknown words
+    for wordInterval in wordTier:
+        if wordInterval.mark not in disallowed:
+            print(f"\t\tProcessing the word: {wordInterval}")
+            word = wordInterval.mark
+            if word not in wordTranscriptions:
+                print(f"\t\tErorr, the word {word} is missing from your pronunciation dictionary")
+                raise ValueError('There is an error, check the log file.')
+                exit()
 
-        wordTranscription = wordTranscriptions[word]
-        transcriptionChanges=wordTranscription.transcriptions
-        phone_intervals = phoneTier.get_annotations_between_timepoints(wordInterval.start_time,
-                                                                       wordInterval.end_time)
-        generated_intermediate_transcription = [p.text for p in phone_intervals]
-        print(f"\t\tThe TextGrid has the generated intermediate transcription: the word: {' '.join(generated_intermediate_transcription)}")
+            wordTranscription = wordTranscriptions[word]
+            transcriptionChanges=wordTranscription.transcriptions
+            phone_intervals = [x for x in tg[1] if x.minTime >= wordInterval.minTime and x.maxTime <= wordInterval.maxTime]
+            generated_intermediate_transcription = [p.mark for p in phone_intervals]
+            print(f"\t\tThe TextGrid has the generated intermediate transcription: the word: {' '.join(generated_intermediate_transcription)}")
 
-        if not wordTranscription.has_any_changes:
-            print(f"\t\t\tThis word cannot have changes so we don't need to process it")
-        else:
-            print(f"\t\t\tThis word can have changes so we must process it")
-            if len(transcriptionChanges)==1:
-                print(f"\t\t\tThis word can has only one possible intermediate representation in the dictionary.")
-                replaceTranscription(transcriptionChanges[0],generated_intermediate_transcription)
+            if not wordTranscription.has_any_changes:
+                print(f"\t\t\tThis word cannot have changes so we don't need to process it")
             else:
-                print(f"\t\t\tThis word can has multiple possible intermediate representation in the dictionary.\n"
-                      f"\t\t\tThey are")
-                for transcriptionChange in transcriptionChanges:
-                    print(transcriptionChange)
-                print(f"\t\t\tWe must find the only identical one.")
-                closest_transcription = findClosestTranscription(transcriptionChanges, generated_intermediate_transcription)
-                print(f"\t\t\tThe closest transcription is:")
-                print(closest_transcription)
-                replaceTranscription(closest_transcription,generated_intermediate_transcription)
+                print(f"\t\t\tThis word can have changes so we must process it")
+                if len(transcriptionChanges)==1:
+                    print(f"\t\t\tThis word can has only one possible intermediate representation in the dictionary.")
+                    replaceTranscription(transcriptionChanges[0],generated_intermediate_transcription)
+                else:
+                    print(f"\t\t\tThis word can has multiple possible intermediate representation in the dictionary.\n"
+                        f"\t\t\tThey are")
+                    for transcriptionChange in transcriptionChanges:
+                        print(transcriptionChange)
+                    print(f"\t\t\tWe must find the only identical one.")
+                    closest_transcription = findClosestTranscription(transcriptionChanges, generated_intermediate_transcription)
+                    print(f"\t\t\tThe closest transcription is:")
+                    print(closest_transcription)
+                    replaceTranscription(closest_transcription,generated_intermediate_transcription)
     print(f"\tThe new TextGrid is saved and replaced the original")
-    tgt.write_to_file(tg,textGridFilePath,format='long')
+    tg.write(textGridFilePath)
 
 
 sys.stdout = old_stdout
