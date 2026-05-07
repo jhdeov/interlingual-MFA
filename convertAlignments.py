@@ -119,11 +119,10 @@ for textGridFilePath in glob.iglob(path + '**/*.TextGrid', recursive=True):
             print(f"\t\tProcessing the word: {wordInterval}")
             word = wordInterval.mark
             if word not in wordTranscriptions:
-	            errors_found = True
-	            print(f"\t\tError, the word {word} is missing from your pronunciation dictionary")
-	            # raise ValueError('There is an error, check the log file.')
-# 	            exit()
-	        
+                print(f"\t\tError, the word {word} is missing from your pronunciation dictionary")
+                raise ValueError('There is an error, check the log file.')
+                exit()
+
             wordTranscription = wordTranscriptions[word]
             transcriptionChanges=wordTranscription.transcriptions
             phone_intervals = [x for x in tg[1] if x.minTime >= wordInterval.minTime and x.maxTime <= wordInterval.maxTime]
