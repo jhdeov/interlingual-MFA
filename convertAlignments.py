@@ -98,7 +98,7 @@ for textGridFilePath in glob.iglob(path + '**/*.TextGrid', recursive=True):
             print(f"\t\tProcessing the word: {wordInterval}")
             word = wordInterval.mark
             if word not in wordTranscriptions:
-                print(f"\t\tErorr, the word {word} is missing from your pronunciation dictionary")
+                print(f"\t\tError, the word {word} is missing from your pronunciation dictionary")
                 raise ValueError('There is an error, check the log file.')
                 exit()
 
