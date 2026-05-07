@@ -93,15 +93,37 @@ for textGridFilePath in glob.iglob(path + '**/*.TextGrid', recursive=True):
 
     # Will go through each word and convert its phone transcription back to the original IPA symbols
     disallowed = ["","[bracketed]","<unk>"] # Ignores silent tiers, as well as any bracketed things (sometimes used for verbal filler) and unknown words
+    
+    # Go over all the word intervals to detect any words present in the transcript but absent from the 
+    # original pronunciation dictionary
+    
+    errors_found = False
+    missing_words = set([])
+    for wordInterval in wordTier:
+        if wordInterval.mark not in disallowed:
+            print(f"\t\tPre-checking the word: {wordInterval}")
+            word = wordInterval.mark
+            if word not in wordTranscriptions:
+	            errors_found = True
+	            missing_words.add(word)
+    if errors_found:
+        print(f"\t\tError, the following words are missing from your pronunciation dictionary")
+        for word in missing_words:
+            print(word)
+        raise ValueError('There is an error, check the log file.')
+        exit()
+
+	# Go over the words and do the conversion
     for wordInterval in wordTier:
         if wordInterval.mark not in disallowed:
             print(f"\t\tProcessing the word: {wordInterval}")
             word = wordInterval.mark
             if word not in wordTranscriptions:
-                print(f"\t\tErorr, the word {word} is missing from your pronunciation dictionary")
-                raise ValueError('There is an error, check the log file.')
-                exit()
-
+	            errors_found = True
+	            print(f"\t\tError, the word {word} is missing from your pronunciation dictionary")
+	            # raise ValueError('There is an error, check the log file.')
+# 	            exit()
+	        
             wordTranscription = wordTranscriptions[word]
             transcriptionChanges=wordTranscription.transcriptions
             phone_intervals = [x for x in tg[1] if x.minTime >= wordInterval.minTime and x.maxTime <= wordInterval.maxTime]
